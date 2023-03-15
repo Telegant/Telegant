@@ -31,21 +31,17 @@ class MessageHandler:
         self.event_handler.chat_id = update["message"]["from"]["id"]
         message_text = update["message"]["text"]
 
-        is_command = False
         if message_text.startswith('/'):
             command, *args = message_text[1:].split()
             handler = self.event_handler.command_handlers.get(command)
-            if handler is not None:
-                is_command = True
+            if handler:
                 await handler(self.event_handler, update, args)
+                return
 
-        if not is_command:
-            handled = False
-            for pattern, handler in self.event_handler.message_handlers.items(): 
-                if re.fullmatch(pattern, message_text):
-                    await handler(self.event_handler, update)
-                    handled = True
-                    break
+        for pattern, handler in self.event_handler.message_handlers.items():
+            if re.fullmatch(pattern, message_text):
+                await handler(self.event_handler, update)
+                return
 
 class CallbackQueryHandler:
     def __init__(self, event_handler):
@@ -91,7 +87,7 @@ class Bot(Method, Helper, EventHandler):
 
     async def get_updates(self, session, last_update_id):
         try:
-            response = await session.get(f"{self.base_url}getUpdates", params={"offset": last_update_id})
+            response = await session.get(f"{self.base_url}getUpdates", params={"offset": last_update_id, "timeout": 60})
             if response.status != 200:
                 print(f"Error: {response.status}")
                 return None, last_update_id
