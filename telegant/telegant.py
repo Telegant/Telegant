@@ -99,6 +99,17 @@ class Bot(Method, Helper, EventHandler):
             print(f"Error polling for updates: {e}")
             return None, last_update_id
 
+    async def request(self, action, params=None):
+        async with aiohttp.ClientSession() as session:
+            try:
+                url = f"{self.base_url}{action}"
+                if not params.get("chat_id"): 
+                    params["chat_id"] = self.chat_id
+                response = await session.post(url, params=params)
+                return await response.json()
+            except Exception as e:
+                print(f"Error sending request: {e}")
+
     def hears(self, pattern):
         return self.add_handler(self.message_handlers, pattern) 
 
