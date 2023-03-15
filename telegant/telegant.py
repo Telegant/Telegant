@@ -17,11 +17,8 @@ class EventHandler:
         }
         
         for key in update:
-            if key in handlers:
-                handler_class = handlers[key]
-                handler = handler_class(self)
-                await handler.handle(update)
-                break
+            if (handler := handlers.get(key)) is not None:
+                await handler(self).handle(update)
 
 class MessageHandler:
     def __init__(self, event_handler):
