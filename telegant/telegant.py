@@ -1,15 +1,79 @@
-from telegant.api import Api
-from telegant.handler import Handler
+from telegant.method import Method
 from telegant.helper import Helper
-import aiohttp   
+import re
+import aiohttp
 
-class Bot(Handler, Api, Helper): 
+class EventHandler: 
+    def add_handler(self, handler_dict, key):
+        def decorator(handler):
+            handler_dict[key] = handler
+            return handler
+        return decorator
+
+    async def handle_update(self, update):
+        handlers = {
+            "message": MessageHandler,
+            "callback_query": CallbackQueryHandler,
+        }
+        
+        for key in update:
+            if key in handlers:
+                handler_class = handlers[key]
+                handler = handler_class(self)
+                await handler.handle(update)
+                break
+
+class MessageHandler:
+    def __init__(self, event_handler):
+        self.event_handler = event_handler
+
+    async def handle(self, update):
+        self.event_handler.chat_id = update["message"]["from"]["id"]
+        message_text = update["message"]["text"]
+
+        is_command = False
+        if message_text.startswith('/'):
+            command, *args = message_text[1:].split()
+            handler = self.event_handler.command_handlers.get(command)
+            if handler is not None:
+                is_command = True
+                await handler(self.event_handler, update, args)
+
+        if not is_command:
+            handled = False
+            for pattern, handler in self.event_handler.message_handlers.items(): 
+                if re.fullmatch(pattern, message_text):
+                    await handler(self.event_handler, update)
+                    handled = True
+                    break
+
+class CallbackQueryHandler:
+    def __init__(self, event_handler):
+        self.event_handler = event_handler
+
+    async def handle(self, update):
+        self.event_handler.chat_id = update["callback_query"]["from"]["id"]
+        callback_data = update["callback_query"]["data"]
+        message = update["callback_query"].get("message")
+
+        handler = self.event_handler.callback_handlers.get(callback_data)
+        if handler is not None:    
+            await handler(self.event_handler, update, message)
+
+        await self.answer_callback_query(update["callback_query"]["id"])
+
+    async def answer_callback_query(self, callback_query_id): 
+        method = "answerCallbackQuery"
+        params = {"callback_query_id": callback_query_id}
+        await self.event_handler.request(method, params)
+
+class Bot(Method, Helper, EventHandler):
     def __init__(self, token):
-        self.token = token
-        self.base_url = f"https://api.telegram.org/bot{self.token}/"
         self.message_handlers = {}
         self.command_handlers = {}
-        self.callback_handlers = {} 
+        self.callback_handlers = {}
+        self.token = token
+        self.base_url = f"https://api.telegram.org/bot{self.token}/"
         self.chat_id = 0
         self.user_dialogues = {}
 
@@ -42,17 +106,14 @@ class Bot(Handler, Api, Helper):
             print(f"Error polling for updates: {e}")
             return None, last_update_id
 
-    def add_handler(self, handler_dict, key):
-        def decorator(handler):
-            handler_dict[key] = handler
-            return handler
-        return decorator
-
     def hears(self, pattern):
         return self.add_handler(self.message_handlers, pattern) 
 
     def command(self, command_str):
         return self.add_handler(self.command_handlers, command_str) 
+
+    def callback(self, callback_data):
+        return self.add_handler(self.callback_handlers, callback_data)
 
     def commands(self, commands_list):
         def decorator(handler_func):
@@ -71,12 +132,3 @@ class Bot(Handler, Api, Helper):
                 return handler_func(*args, **kwargs)
             return wrapper
         return decorator 
-
-    def callback(self, callback_data):
-        return self.add_handler(self.callback_handlers, callback_data)
-'''
-class Bot(Decorator): 
-    api: Api, 
-    helper: Helper, 
-    handler: Handler
-'''

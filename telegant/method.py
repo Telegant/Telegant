@@ -1,6 +1,6 @@
 import aiohttp  
 
-class Api:
+class Method:
     async def request(self, action, params=None):
         async with aiohttp.ClientSession() as session:
             try:
