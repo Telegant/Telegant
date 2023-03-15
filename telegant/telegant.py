@@ -11,13 +11,8 @@ class EventHandler:
         return decorator
 
     async def handle_update(self, update):
-        handlers = {
-            "message": MessageHandler,
-            "callback_query": CallbackQueryHandler,
-        }
-        
         for key in update:
-            if (handler := handlers.get(key)) is not None:
+            if (handler := self.handlers.get(key)) is not None:
                 await handler(self).handle(update)
 
 class MessageHandler:
@@ -62,6 +57,7 @@ class CallbackQueryHandler:
 
 class Bot(Method, Helper, EventHandler):
     def __init__(self, token):
+        self.handlers = {}
         self.message_handlers = {}
         self.command_handlers = {}
         self.callback_handlers = {}
@@ -111,17 +107,21 @@ class Bot(Method, Helper, EventHandler):
                 print(f"Error sending request: {e}")
 
     def hears(self, pattern):
+        self.handlers.setdefault('message', MessageHandler)
         return self.add_handler(self.message_handlers, pattern) 
 
     def command(self, command_str):
+        self.handlers.setdefault('message', MessageHandler)
         return self.add_handler(self.command_handlers, command_str) 
 
     def callback(self, callback_data):
+        self.handlers.setdefault('callback_query', CallbackQueryHandler)
         return self.add_handler(self.callback_handlers, callback_data)
 
     def commands(self, commands_list):
         def decorator(handler_func):
             for command in commands_list:
+                self.handlers.setdefault('message', MessageHandler)
                 self.add_handler(self.command_handlers, command)(handler_func)
             def wrapper(*args, **kwargs):
                 return handler_func(*args, **kwargs)
@@ -131,6 +131,7 @@ class Bot(Method, Helper, EventHandler):
     def callbacks(self, callbacks_list):
         def decorator(handler_func):
             for callback in callbacks_list:
+                self.handlers.setdefault('callback_query', CallbackQueryHandler)
                 self.add_handler(self.callback_handlers, callback)(handler_func)
             def wrapper(*args, **kwargs):
                 return handler_func(*args, **kwargs)
