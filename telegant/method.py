@@ -1,8 +1,7 @@
 import aiohttp  
 
 class Method:
-    async def sendMessage(self, **params):
-        return await self.request("sendMessage", params)
-
-    async def sendDice(self, **params):  
-        return await self.request("sendDice", params)
+    def __getattr__(self, name):
+        async def wrapper(**params):
+            return await self.request(name, params)
+        return wrapper
