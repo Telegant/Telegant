@@ -1,7 +1,7 @@
-from telegant.handlers.TextHandler import TextHandler
-from telegant.handlers.CommandHandler import CommandHandler
-from telegant.handlers.CallbackQueryHandler import CallbackQueryHandler
-from telegant.handlers.EventHandler import EventHandler
+from telegant.handlers import TextHandler
+from telegant.handlers import CommandHandler
+from telegant.handlers import CallbackQueryHandler
+from telegant.handlers import EventHandler
 import re
 import aiohttp
 import asyncio
