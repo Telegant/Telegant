@@ -36,7 +36,6 @@ class EventHandler(Method, Helper):
                 for task in handler: 
                     if task is not None:
                         tasks.append(asyncio.create_task(task.handle(update)))
-                print(self.handlers)
         await asyncio.gather(*tasks)
 
 class TextHandler():    
@@ -138,6 +137,13 @@ class Bot():
         self.event_handler.handlers[key].extend([handler])
         return self.event_handler.add_handler(handlers, value)   
 
+    def events_handler(self, events_list, event_type, handler_cls, handler_list_attr):
+        def decorator(handler_func):
+            for event in events_list:
+                self.process_event_handler(event_type, event, handler_cls(self.event_handler), getattr(self.event_handler, handler_list_attr))(handler_func)
+            return handler_func
+        return decorator
+
     def hears(self, value): 
         return self.process_event_handler('message', value, TextHandler(self.event_handler), self.event_handler.message_handlers) 
 
@@ -148,19 +154,7 @@ class Bot():
         return self.process_event_handler('callback_query', value, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers) 
 
     def commands(self, commands_list):
-        def decorator(handler_func):
-            for command in commands_list:
-                self.process_event_handler('message', command, CommandHandler(self.event_handler), self.event_handler.command_handlers)(handler_func)
-            def wrapper(*args, **kwargs):
-                return handler_func(*args, **kwargs)
-            return wrapper
-        return decorator 
+        return self.events_handler(commands_list, 'message', CommandHandler, 'command_handlers')
 
     def callbacks(self, callbacks_list):
-        def decorator(handler_func):
-            for callback in callbacks_list:        
-                self.process_event_handler('callback_query', callback, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers)(handler_func)
-            def wrapper(*args, **kwargs):
-                return handler_func(*args, **kwargs)
-            return wrapper
-        return decorator 
+        return self.events_handler(callbacks_list, 'callback_query', CallbackQueryHandler, 'callback_handlers')
