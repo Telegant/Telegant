@@ -1,42 +1,7 @@
-from telegant.method import Method
-from telegant.helper import Helper
+from telegant.handlers.EventHandler import EventHandler
 import re
 import aiohttp
 import asyncio
-
-class EventHandler(Method, Helper): 
-    def __init__(self):
-        self.chat_id = 0
-        self.handlers = {}
-        self.message_handlers = {}
-        self.command_handlers = {}
-        self.callback_handlers = {}
-
-    def add_handler(self, handler_dict, key):
-        def decorator(handler):
-            handler_dict[key] = handler
-            return handler
-        return decorator
-
-    async def request(self, action, params=None):
-        async with aiohttp.ClientSession() as session:
-            try:
-                url = f"{self.base_url}{action}"
-                if not params.get("chat_id"): 
-                    params["chat_id"] = self.chat_id
-                response = await session.post(url, params=params)
-                return await response.json()
-            except Exception as e:
-                print(f"Error sending request: {e}")
-
-    async def handle_update(self, update):
-        tasks = []
-        for key in update:
-            if (handler := self.handlers.get(key)) is not None:
-                for task in handler: 
-                    if task is not None:
-                        tasks.append(asyncio.create_task(task.handle(update)))
-        await asyncio.gather(*tasks)
 
 class TextHandler():    
     def __init__(self, event_handler):
@@ -140,7 +105,7 @@ class Bot():
     def events_handler(self, events_list, event_type, handler_cls, handler_list_attr):
         def decorator(handler_func):
             for event in events_list:
-                self.process_event_handler(event_type, event, handler_cls(self.event_handler), getattr(self.event_handler, handler_list_attr))(handler_func)
+                self.process_event_handler(event_type, event, handler_cls, getattr(self.event_handler, handler_list_attr))(handler_func)
             return handler_func
         return decorator
 
@@ -154,7 +119,7 @@ class Bot():
         return self.process_event_handler('callback_query', value, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers) 
 
     def commands(self, commands_list):
-        return self.events_handler(commands_list, 'message', CommandHandler, 'command_handlers')
+        return self.events_handler(commands_list, 'message', CommandHandler(self.event_handler), 'command_handlers')
 
     def callbacks(self, callbacks_list):
-        return self.events_handler(callbacks_list, 'callback_query', CallbackQueryHandler, 'callback_handlers')
+        return self.events_handler(callbacks_list, 'callback_query', CallbackQueryHandler(self.event_handler), 'callback_handlers')
