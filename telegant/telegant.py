@@ -2,38 +2,76 @@ from telegant.method import Method
 from telegant.helper import Helper
 import re
 import aiohttp
+import asyncio
 
-class EventHandler: 
+class EventHandler(Method, Helper): 
+    def __init__(self):
+        self.chat_id = 0
+        self.handlers = {}
+        self.message_handlers = {}
+        self.command_handlers = {}
+        self.callback_handlers = {}
+
     def add_handler(self, handler_dict, key):
         def decorator(handler):
             handler_dict[key] = handler
             return handler
         return decorator
 
+    async def request(self, action, params=None):
+        async with aiohttp.ClientSession() as session:
+            try:
+                url = f"{self.base_url}{action}"
+                if not params.get("chat_id"): 
+                    params["chat_id"] = self.chat_id
+                response = await session.post(url, params=params)
+                return await response.json()
+            except Exception as e:
+                print(f"Error sending request: {e}")
+
     async def handle_update(self, update):
+        tasks = []
         for key in update:
             if (handler := self.handlers.get(key)) is not None:
-                await handler(self).handle(update)
+                for task in handler: 
+                    if task is not None:
+                        tasks.append(asyncio.create_task(task.handle(update)))
+                print(self.handlers)
+        await asyncio.gather(*tasks)
 
-class MessageHandler:
+class TextHandler():    
+    def __init__(self, event_handler):
+        self.event_handler = event_handler
+    
+    async def handle(self, update):
+        handled = False
+        self.event_handler.chat_id = update["message"]["from"]["id"]
+        message_text = update["message"]["text"]
+
+        for pattern, handler in self.event_handler.message_handlers.items():
+            if handled is not True:
+                if re.fullmatch(pattern, message_text):
+                    await handler(self.event_handler, update)
+                    handled = True
+                    return
+
+class CommandHandler():
     def __init__(self, event_handler):
         self.event_handler = event_handler
 
     async def handle(self, update):
+        handled = False
         self.event_handler.chat_id = update["message"]["from"]["id"]
         message_text = update["message"]["text"]
 
-        if message_text.startswith('/'):
-            command, *args = message_text[1:].split()
-            handler = self.event_handler.command_handlers.get(command)
-            if handler:
-                await handler(self.event_handler, update, args)
-                return
-
-        for pattern, handler in self.event_handler.message_handlers.items():
-            if re.fullmatch(pattern, message_text):
-                await handler(self.event_handler, update)
-                return
+        if handled is not True:
+            if message_text.startswith('/'):
+                command, *args = message_text[1:].split()
+                handler = self.event_handler.command_handlers.get(command)
+                if handler:
+                    await handler(self.event_handler, update, args)
+                    handled = True
+                    return
 
 class CallbackQueryHandler:
     def __init__(self, event_handler):
@@ -55,16 +93,11 @@ class CallbackQueryHandler:
         params = {"callback_query_id": callback_query_id}
         await self.event_handler.request(method, params)
 
-class Bot(Method, Helper, EventHandler):
+class Bot():
     def __init__(self, token):
-        self.handlers = {}
-        self.message_handlers = {}
-        self.command_handlers = {}
-        self.callback_handlers = {}
         self.token = token
-        self.base_url = f"https://api.telegram.org/bot{self.token}/"
-        self.chat_id = 0
-        self.user_dialogues = {}
+        self.event_handler = EventHandler()         
+        self.event_handler.base_url = f"https://api.telegram.org/bot{self.token}/"
 
     async def start_polling(self):
         last_update_id = 0
@@ -76,11 +109,11 @@ class Bot(Method, Helper, EventHandler):
                     continue
 
                 for update in response_json["result"]:
-                    await self.handle_update(update)
+                    await self.event_handler.handle_update(update)
 
     async def get_updates(self, session, last_update_id):
         try:
-            response = await session.get(f"{self.base_url}getUpdates", params={"offset": last_update_id, "timeout": 60})
+            response = await session.get(f"{self.event_handler.base_url}getUpdates", params={"offset": last_update_id, "timeout": 30})
             if response.status != 200:
                 print(f"Error: {response.status}")
                 return None, last_update_id
@@ -94,35 +127,30 @@ class Bot(Method, Helper, EventHandler):
         except Exception as e:
             print(f"Error polling for updates: {e}")
             return None, last_update_id
+            
+    def process_event_handler(self, key, value, handler, handlers): 
+        if key not in self.event_handler.handlers: 
+            self.event_handler.handlers[key] = []
 
-    async def request(self, action, params=None):
-        async with aiohttp.ClientSession() as session:
-            try:
-                url = f"{self.base_url}{action}"
-                if not params.get("chat_id"): 
-                    params["chat_id"] = self.chat_id
-                response = await session.post(url, params=params)
-                return await response.json()
-            except Exception as e:
-                print(f"Error sending request: {e}")
+        if type(handler) in (type(h) for h in self.event_handler.handlers[key]):
+            return self.event_handler.add_handler(handlers, value)  
+        
+        self.event_handler.handlers[key].extend([handler])
+        return self.event_handler.add_handler(handlers, value)   
 
-    def hears(self, pattern):
-        self.handlers.setdefault('message', MessageHandler)
-        return self.add_handler(self.message_handlers, pattern) 
+    def hears(self, value): 
+        return self.process_event_handler('message', value, TextHandler(self.event_handler), self.event_handler.message_handlers) 
 
-    def command(self, command_str):
-        self.handlers.setdefault('message', MessageHandler)
-        return self.add_handler(self.command_handlers, command_str) 
+    def command(self, value): 
+        return self.process_event_handler('message', value, CommandHandler(self.event_handler), self.event_handler.command_handlers) 
 
-    def callback(self, callback_data):
-        self.handlers.setdefault('callback_query', CallbackQueryHandler)
-        return self.add_handler(self.callback_handlers, callback_data)
+    def callback(self, value): 
+        return self.process_event_handler('callback_query', value, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers) 
 
     def commands(self, commands_list):
         def decorator(handler_func):
             for command in commands_list:
-                self.handlers.setdefault('message', MessageHandler)
-                self.add_handler(self.command_handlers, command)(handler_func)
+                self.process_event_handler('message', command, CommandHandler(self.event_handler), self.event_handler.command_handlers)(handler_func)
             def wrapper(*args, **kwargs):
                 return handler_func(*args, **kwargs)
             return wrapper
@@ -130,9 +158,8 @@ class Bot(Method, Helper, EventHandler):
 
     def callbacks(self, callbacks_list):
         def decorator(handler_func):
-            for callback in callbacks_list:
-                self.handlers.setdefault('callback_query', CallbackQueryHandler)
-                self.add_handler(self.callback_handlers, callback)(handler_func)
+            for callback in callbacks_list:        
+                self.process_event_handler('callback_query', callback, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers)(handler_func)
             def wrapper(*args, **kwargs):
                 return handler_func(*args, **kwargs)
             return wrapper
