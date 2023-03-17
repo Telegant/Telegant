@@ -1,6 +1,7 @@
 from telegant.method import Method
 from telegant.helper import Helper
 import aiohttp
+import asyncio
 
 class EventHandler(Method, Helper): 
     def __init__(self):

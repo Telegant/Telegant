@@ -1,61 +1,10 @@
+from telegant.handlers.TextHandler import TextHandler
+from telegant.handlers.CommandHandler import CommandHandler
+from telegant.handlers.CallbackQueryHandler import CallbackQueryHandler
 from telegant.handlers.EventHandler import EventHandler
 import re
 import aiohttp
 import asyncio
-
-class TextHandler():    
-    def __init__(self, event_handler):
-        self.event_handler = event_handler
-    
-    async def handle(self, update):
-        handled = False
-        self.event_handler.chat_id = update["message"]["from"]["id"]
-        message_text = update["message"]["text"]
-
-        for pattern, handler in self.event_handler.message_handlers.items():
-            if handled is not True:
-                if re.fullmatch(pattern, message_text):
-                    await handler(self.event_handler, update)
-                    handled = True
-                    return
-
-class CommandHandler():
-    def __init__(self, event_handler):
-        self.event_handler = event_handler
-
-    async def handle(self, update):
-        handled = False
-        self.event_handler.chat_id = update["message"]["from"]["id"]
-        message_text = update["message"]["text"]
-
-        if handled is not True:
-            if message_text.startswith('/'):
-                command, *args = message_text[1:].split()
-                handler = self.event_handler.command_handlers.get(command)
-                if handler:
-                    await handler(self.event_handler, update, args)
-                    handled = True
-                    return
-
-class CallbackQueryHandler:
-    def __init__(self, event_handler):
-        self.event_handler = event_handler
-
-    async def handle(self, update):
-        self.event_handler.chat_id = update["callback_query"]["from"]["id"]
-        callback_data = update["callback_query"]["data"]
-        message = update["callback_query"].get("message")
-
-        handler = self.event_handler.callback_handlers.get(callback_data)
-        if handler is not None:    
-            await handler(self.event_handler, update, message)
-
-        await self.answer_callback_query(update["callback_query"]["id"])
-
-    async def answer_callback_query(self, callback_query_id): 
-        method = "answerCallbackQuery"
-        params = {"callback_query_id": callback_query_id}
-        await self.event_handler.request(method, params)
 
 class Bot():
     def __init__(self, token):
