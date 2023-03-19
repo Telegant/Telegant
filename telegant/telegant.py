@@ -41,7 +41,9 @@ class Bot():
             print(f"Error polling for updates: {e}")
             return None, last_update_id
             
-    def process_event_handler(self, key, value, handler, handlers): 
+    def process_event_handler(self, value, key, handler, handlers): 
+        handlers = getattr(self.event_handler, handlers)
+
         if key not in self.event_handler.handlers: 
             self.event_handler.handlers[key] = []
 
@@ -54,18 +56,18 @@ class Bot():
     def events_handler(self, events_list, event_type, handler_cls, handler_list_attr):
         def decorator(handler_func):
             for event in events_list:
-                self.process_event_handler(event_type, event, handler_cls, getattr(self.event_handler, handler_list_attr))(handler_func)
+                self.process_event_handler(event_type, event, handler_cls, handler_list_attr)(handler_func)
             return handler_func
         return decorator
 
     def hears(self, value): 
-        return self.process_event_handler('message', value, TextHandler(self.event_handler), self.event_handler.message_handlers) 
+        return self.process_event_handler(value, 'message', TextHandler(self.event_handler), 'message_handlers') 
 
     def command(self, value): 
-        return self.process_event_handler('message', value, CommandHandler(self.event_handler), self.event_handler.command_handlers) 
+        return self.process_event_handler(value, 'message', CommandHandler(self.event_handler), 'command_handlers') 
 
     def callback(self, value): 
-        return self.process_event_handler('callback_query', value, CallbackQueryHandler(self.event_handler), self.event_handler.callback_handlers) 
+        return self.process_event_handler(value, 'callback_query', CallbackQueryHandler(self.event_handler), 'callback_handlers') 
 
     def commands(self, commands_list):
         return self.events_handler(commands_list, 'message', CommandHandler(self.event_handler), 'command_handlers')
