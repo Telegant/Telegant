@@ -24,6 +24,14 @@ Telegant is an elegant modern bot framework for Python, designed to provide deve
 This project is now in Beta phase. 
 All Telegram bot api methods are now supported automatically.
 
+# Features and highlights:
+* Automated coverage of all Telegram bot api methods
+* Support of snake_case and PascalCase for calling methods
+* Asynchronous bot
+* Lightweight (Less than 20kb at the moment!)
+* Simple usage
+* Bot Helpers 
+
 # Installation 
 To install the project, simply run:
 
