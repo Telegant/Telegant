@@ -32,10 +32,10 @@ class EventHandler(Method, Helper):
                 print(f"Error sending request: {e}")
 
     async def handle_update(self, update):
-        tasks = [] 
+        tasks = []
         for key in update:
             if (handler := self.handlers.get(key)) is not None:
-                for task in handler: 
+                for task in handler:
                     if task is not None:
                         tasks.append(asyncio.create_task(task.handle(update)))
         await asyncio.gather(*tasks)

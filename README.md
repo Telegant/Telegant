@@ -31,6 +31,7 @@ All Telegram bot api methods are now supported automatically.
 * Lightweight (Less than 20kb at the moment!)
 * Simple usage
 * Bot Helpers 
+* Regex Expressions for text messages 
 
 # Installation 
 To install the project, simply run:
