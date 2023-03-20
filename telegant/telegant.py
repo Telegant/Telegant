@@ -1,6 +1,7 @@
 from telegant.handlers import TextHandler
 from telegant.handlers import CommandHandler
 from telegant.handlers import CallbackQueryHandler
+from telegant.handlers import UpdateHandler
 from telegant.handlers import EventHandler
 import re
 import aiohttp
@@ -40,7 +41,7 @@ class Bot():
         except Exception as e:
             print(f"Error polling for updates: {e}")
             return None, last_update_id
-            
+              
     def process_event_handler(self, value, key, handler, handlers): 
         handlers = getattr(self.event_handler, handlers)
 
@@ -49,11 +50,11 @@ class Bot():
 
         if type(handler) in (type(h) for h in self.event_handler.handlers[key]):
             return self.event_handler.add_handler(handlers, value)  
-        
-        self.event_handler.handlers[key].extend([handler])
+
+        self.event_handler.handlers[key].extend([handler]) 
         return self.event_handler.add_handler(handlers, value)   
 
-    def events_handler(self, events_list, event_type, handler_cls, handler_list_attr):
+    def process_many_events(self, events_list, event_type, handler_cls, handler_list_attr):
         def decorator(handler_func):
             for event in events_list:
                 self.process_event_handler(event_type, event, handler_cls, handler_list_attr)(handler_func)
@@ -64,13 +65,14 @@ class Bot():
         return self.process_event_handler(value, 'message', TextHandler(self.event_handler), 'message_handlers') 
 
     def command(self, value): 
+        print(value)
         return self.process_event_handler(value, 'message', CommandHandler(self.event_handler), 'command_handlers') 
 
     def callback(self, value): 
         return self.process_event_handler(value, 'callback_query', CallbackQueryHandler(self.event_handler), 'callback_handlers') 
 
     def commands(self, commands_list):
-        return self.events_handler(commands_list, 'message', CommandHandler(self.event_handler), 'command_handlers')
+        return self.process_many_events(commands_list, 'message', CommandHandler(self.event_handler), 'command_handlers')
 
     def callbacks(self, callbacks_list):
-        return self.events_handler(callbacks_list, 'callback_query', CallbackQueryHandler(self.event_handler), 'callback_handlers')
+        return self.process_many_events(callbacks_list, 'callback_query', CallbackQueryHandler(self.event_handler), 'callback_handlers')
