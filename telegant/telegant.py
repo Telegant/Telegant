@@ -78,7 +78,6 @@ class Bot:
         )
 
     def command(self, value):
-        print(value)
         return self.process_event_handler(
             value, "message", CommandHandler(self.event_handler), "command_handlers"
         )
