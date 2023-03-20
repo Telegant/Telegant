@@ -58,6 +58,7 @@ class Bot:
             return self.event_handler.add_handler(handlers, value)
 
         self.event_handler.handlers[key].extend([handler])
+        print(self.event_handler.handlers)
         return self.event_handler.add_handler(handlers, value)
 
     def process_many_events(
@@ -66,7 +67,7 @@ class Bot:
         def decorator(handler_func):
             for event in events_list:
                 self.process_event_handler(
-                    event_type, event, handler_cls, handler_list_attr
+                    event, event_type, handler_cls, handler_list_attr
                 )(handler_func)
             return handler_func
 
