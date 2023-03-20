@@ -57,8 +57,7 @@ class Bot:
         if type(handler) in (type(h) for h in self.event_handler.handlers[key]):
             return self.event_handler.add_handler(handlers, value)
 
-        self.event_handler.handlers[key].extend([handler])
-        print(self.event_handler.handlers)
+        self.event_handler.handlers[key].extend([handler]) 
         return self.event_handler.add_handler(handlers, value)
 
     def process_many_events(
