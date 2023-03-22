@@ -96,14 +96,6 @@ async def say_hello(bot, update):
     await bot.SendMessage(text="What's up?")
 ```
 
-### kebab-case
-
-```python 
-@bot.hears("hello")
-async def say_hello(bot, update): 
-    await bot.send-message(text="What's up?")
-```
-
 ## Sending bot with buttons
 
 ### Inline buttons example
