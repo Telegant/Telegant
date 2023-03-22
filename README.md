@@ -68,10 +68,11 @@ If you need your bot to respond to specified text just use @bot.hears()
 async def say_hello(bot, update): 
     await bot.send_message(text="What's up?")
 ```
+## Case styles
 
 Ability to use both snake_case and PascalCase style methods
 
-## camelCase 
+### camelCase 
 
 ```python 
 @bot.hears("hello")
@@ -79,7 +80,7 @@ async def say_hello(bot, update):
     await bot.sendMessage(text="What's up?")
 ```
 
-## snake_case
+### snake_case
 
 ```python 
 @bot.hears("hello")
