@@ -71,7 +71,7 @@ async def say_hello(bot, update):
 
 Ability to use both snake_case and PascalCase style methods
 
-## PascalCase 
+## camelCase 
 
 ```python 
 @bot.hears("hello")
