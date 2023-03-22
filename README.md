@@ -70,7 +70,15 @@ async def say_hello(bot, update):
 ```
 ## Case styles
 
-Ability to use both snake_case and PascalCase style methods
+Ability to use different case styles
+
+### snake_case
+
+```python 
+@bot.hears("hello")
+async def say_hello(bot, update): 
+    await bot.send_message(text="What's up?")
+```
 
 ### camelCase 
 
@@ -80,12 +88,20 @@ async def say_hello(bot, update):
     await bot.sendMessage(text="What's up?")
 ```
 
-### snake_case
+### PascalCase 
 
 ```python 
 @bot.hears("hello")
 async def say_hello(bot, update): 
-    await bot.send_message(text="What's up?")
+    await bot.SendMessage(text="What's up?")
+```
+
+### kebab-case
+
+```python 
+@bot.hears("hello")
+async def say_hello(bot, update): 
+    await bot.send-message(text="What's up?")
 ```
 
 ## Sending bot with buttons
