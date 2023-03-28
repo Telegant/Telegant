@@ -23,7 +23,7 @@ class Bot:
 
         self.decorators = handlers
 
-    async def start_polling(self):
+    async def polling(self):
         last_update_id = 0
         async with aiohttp.ClientSession() as session:
             while True:
@@ -56,6 +56,9 @@ class Bot:
         except Exception as e:
             print(f"Error polling for updates: {e}")
             return None, last_update_id
+
+    def start_polling(self):
+        asyncio.run(self.polling())
 
     def process_event_handler(self, value, key, handler, handlers):
         handlers = getattr(self.event_handler, handlers)
