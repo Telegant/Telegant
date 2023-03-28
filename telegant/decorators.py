@@ -1,7 +1,9 @@
-from telegant.handlers import TextHandler
-from telegant.handlers import CommandHandler
-from telegant.handlers import CallbackQueryHandler
-from telegant.handlers import UpdateHandler
+from telegant.handlers import (
+    TextHandler, 
+    CommandHandler, 
+    CallbackQueryHandler,
+    UpdateHandler
+)
 
 handler_classes = {
     TextHandler: TextHandler,
