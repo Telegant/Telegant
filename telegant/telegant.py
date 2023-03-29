@@ -1,15 +1,16 @@
 from telegant.handlers import (
     EventHandler,
-    TextHandler, 
-    CommandHandler, 
+    TextHandler,
+    CommandHandler,
     CallbackQueryHandler,
-    UpdateHandler
+    UpdateHandler,
 )
 
 import re
 import aiohttp
 import asyncio
 import json
+
 
 class Bot:
     def __init__(self, token):
@@ -77,7 +78,7 @@ class Bot:
             return handler_func
 
         return decorator
- 
+
     def with_args(self, keys):
         def decorator(handler_func):
             async def wrapper(bot, update, data):
@@ -89,31 +90,24 @@ class Bot:
                         k: args[i] if i < len(args) else "" for i, k in enumerate(keys)
                     }
                     await handler_func(bot, update, data)
+
             return wrapper
+
         return decorator
 
     def hear(self, value):
         return self.process_event_handler(
-            value, 
-            "message", 
-            TextHandler(self.event_handler), 
-            "message_handlers"
+            value, "message", TextHandler(self.event_handler), "message_handlers"
         )
 
     def hears(self, value):
         return self.process_many_events(
-            value, 
-            "message", 
-            TextHandler(self.event_handler), 
-            "message_handlers"
+            value, "message", TextHandler(self.event_handler), "message_handlers"
         )
 
     def command(self, value):
         return self.process_event_handler(
-            value, 
-            "message", 
-            CommandHandler(self.event_handler), 
-            "command_handlers"
+            value, "message", CommandHandler(self.event_handler), "command_handlers"
         )
 
     def callback(self, value):

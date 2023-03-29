@@ -40,6 +40,11 @@ To install the project, simply run:
 pip install telegant
 ```
 
+# Contribution 
+
+For contribution to this project you have to open discussion under Contribution section.
+It will be decided if your request is going to be accepted or not. 
+
 # Example 
 
 ```python
