@@ -44,17 +44,16 @@ pip install telegant
 
 ```python
 from telegant import Bot
-import asyncio
 
 bot = Bot("YOUR_BOT_TOKEN_HERE")
 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
     await bot.send_message(text="What's up?")
 
 #Your code here (Recommended to write your functions in order)
 
-asyncio.run(bot.start_polling())
+bot.start_polling()
 ```
 
 # Usage 
@@ -64,7 +63,15 @@ asyncio.run(bot.start_polling())
 If you need your bot to respond to specified text just use @bot.hears()
 
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
+async def say_hello(bot, update): 
+    await bot.send_message(text="What's up?")
+```
+
+Or many texts 
+
+```python 
+@bot.hears(["hello"])
 async def say_hello(bot, update): 
     await bot.send_message(text="What's up?")
 ```
@@ -75,7 +82,7 @@ Ability to use different case styles
 ### snake_case
 
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
     await bot.send_message(text="What's up?")
 ```
@@ -83,7 +90,7 @@ async def say_hello(bot, update):
 ### camelCase 
 
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
     await bot.sendMessage(text="What's up?")
 ```
@@ -91,7 +98,7 @@ async def say_hello(bot, update):
 ### PascalCase 
 
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
     await bot.SendMessage(text="What's up?")
 ```
@@ -100,7 +107,7 @@ async def say_hello(bot, update):
 
 ### Inline buttons example
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
  
     buttons = [
@@ -114,7 +121,7 @@ async def say_hello(bot, update):
 ### Reply buttons example
 
 ```python 
-@bot.hears("hello")
+@bot.hear("hello")
 async def say_hello(bot, update): 
  
     buttons = [

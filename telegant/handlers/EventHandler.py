@@ -1,10 +1,9 @@
 from telegant.method import Method
-from telegant.helper import Helper
 import aiohttp
 import asyncio
 
 
-class EventHandler(Method, Helper):
+class EventHandler(Method):
     def __init__(self):
         self.chat_id = 0
         self.handlers = {}

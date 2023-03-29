@@ -1,27 +1,21 @@
-from telegant.handlers import EventHandler
-from telegant.decorators import *
+from telegant.handlers import (
+    EventHandler,
+    TextHandler, 
+    CommandHandler, 
+    CallbackQueryHandler,
+    UpdateHandler
+)
+
 import re
 import aiohttp
 import asyncio
-
+import json
 
 class Bot:
     def __init__(self, token):
         self.token = token
         self.event_handler = EventHandler()
         self.event_handler.base_url = f"https://api.telegram.org/bot{self.token}/"
-
-        handlers = {}
-        for name, data in decorators.items():
-            handler_class = handler_classes.get(data["handler"].__class__)
-            if handler_class is not None:
-                handlers[name] = {
-                    "type": data["type"],
-                    "handler": handler_class(self.event_handler),
-                    "handlers": data["handlers"]
-                }
-
-        self.decorators = handlers
 
     async def polling(self):
         last_update_id = 0
@@ -83,25 +77,65 @@ class Bot:
             return handler_func
 
         return decorator
+ 
+    def with_args(self, keys):
+        def decorator(handler_func):
+            async def wrapper(bot, update, data):
+                message = update.get("message")
+                if message:
+                    message_text = message.get("text", "")
+                    args = message_text.split()[1:]
+                    data = {
+                        k: args[i] if i < len(args) else "" for i, k in enumerate(keys)
+                    }
+                    await handler_func(bot, update, data)
+            return wrapper
+        return decorator
 
-    def __getattr__(self, name):
-        def wrapper(value): 
-            data = self.decorators[name]
-            is_plural = bool(re.search(r's$|es$|ies$', name))
+    def hear(self, value):
+        return self.process_event_handler(
+            value, 
+            "message", 
+            TextHandler(self.event_handler), 
+            "message_handlers"
+        )
 
-            if is_plural:
-                return self.process_many_events(
-                    value,
-                    data["type"],
-                    data["handler"],
-                    data["handlers"],
-                )
+    def hears(self, value):
+        return self.process_many_events(
+            value, 
+            "message", 
+            TextHandler(self.event_handler), 
+            "message_handlers"
+        )
 
-            return self.process_event_handler(
-                value,
-                data["type"],
-                data["handler"],
-                data["handlers"],
-            )
-            
-        return wrapper
+    def command(self, value):
+        return self.process_event_handler(
+            value, 
+            "message", 
+            CommandHandler(self.event_handler), 
+            "command_handlers"
+        )
+
+    def callback(self, value):
+        return self.process_event_handler(
+            value,
+            "callback_query",
+            CallbackQueryHandler(self.event_handler),
+            "callback_handlers",
+        )
+
+    def commands(self, commands_list):
+        return self.process_many_events(
+            commands_list,
+            "message",
+            CommandHandler(self.event_handler),
+            "command_handlers",
+        )
+
+    def callbacks(self, callbacks_list):
+        return self.process_many_events(
+            callbacks_list,
+            "callback_query",
+            CallbackQueryHandler(self.event_handler),
+            "callback_handlers",
+        )
