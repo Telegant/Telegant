@@ -1,5 +1,6 @@
 import re
 
+
 class Method:
     def __getattr__(self, name):
         async def wrapper(**params):
