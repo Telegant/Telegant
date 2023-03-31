@@ -65,7 +65,7 @@ bot.start_polling()
 
 ## On text 
 
-If you need your bot to respond to specified text just use @bot.hears()
+If you need your bot to respond to specified text just use @bot.hear()
 
 ```python 
 @bot.hear("hello")
