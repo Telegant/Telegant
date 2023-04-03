@@ -26,10 +26,11 @@ All Telegram bot api methods are now supported automatically.
 
 # Features and highlights
 * Automated coverage of all Telegram bot api methods
-* Support of snake_case and PascalCase for calling methods
+* Support of snake_case, camelCase and PascalCase for methods
 * Asynchronous bot
-* Lightweight (Less than 20kb at the moment!)
-* Simple usage
+* Lightweight
+* Fast
+* Simple
 * Bot Helpers 
 * Regex Expressions for text messages 
 
