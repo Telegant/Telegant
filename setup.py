@@ -4,7 +4,7 @@ import os
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-setup(
+setup( 
     name='Telegant',
     version='0.2.0',
     description='An Elegant Modern Bot Framework for Python',
