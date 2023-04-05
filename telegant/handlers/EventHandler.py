@@ -25,6 +25,8 @@ class EventHandler(Method):
                 url = f"{self.base_url}{action}"
                 if not params.get("chat_id"):
                     params["chat_id"] = self.chat_id
+                if params.get("reply_markup"):
+                    params["reply_markup"] = self.create_keyboard(params["reply_markup"])
                 response = await session.post(url, params=params)
                 return await response.json()
             except Exception as e:
