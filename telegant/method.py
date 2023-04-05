@@ -3,19 +3,27 @@ import json
 
 
 class Method:
-    def create_inline_keyboard(self, buttons):
-        return [
-            [{"text": b["text"], "callback_data": b.get("data", "")}] for b in buttons
-        ]
+    def modify_keyboard(self, buttons, inline=False):
+        new_buttons = []
+        for row in buttons:
+            new_row = []
+            for button in row:
+                if isinstance(button, dict):
+                    if inline and "callback_data" in button:
+                        new_row.append(button)
+                    elif not inline and "callback_data" not in button:
+                        new_row.append(button)
+                elif not inline:
+                    new_row.append(button)
+            if new_row:
+                new_buttons.append(new_row)
+        return new_buttons
 
-    def create_reply_keyboard(self, buttons):
-        return [[{"text": b["text"]}] for b in buttons if "data" not in b]
-
-    def create_reply_markup(self, buttons):
+    def create_keyboard(self, buttons):
         return json.dumps(
             {
-                "inline_keyboard": self.create_inline_keyboard(buttons),
-                "keyboard": self.create_reply_keyboard(buttons),
+                "inline_keyboard": self.modify_keyboard(buttons, inline=True),
+                "keyboard": self.modify_keyboard(buttons, inline=False),
                 "one_time_keyboard": True,
             }
         )
