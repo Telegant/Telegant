@@ -114,7 +114,7 @@ async def say_hello(bot, update):
 async def say_hello(bot, update): 
     buttons = [
         [
-            {"text": "Option 1 (inline)", "data": "option1"},  
+            {"text": "Option 1 (inline)", "callback_data": "option1"},  
         ]
     ]
 
@@ -136,7 +136,7 @@ async def say_hello(bot, update):
     await bot.send_message(text="What's up?", reply_markup=buttons)
 ```
 
-Bot always detects your buttons type automatically by data key. 
+Bot always detects your buttons type automatically by callback_data key. 
 If you want to use inline buttons you have to write text and data values for each button.
 As it is detects your inline button when you have "data" key in your button.
 Otherwise, it will detect as reply keyboard.
