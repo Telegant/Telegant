@@ -1,4 +1,3 @@
-
 <h1 align="center">
     <code>Telegant</code>
 </h1>
@@ -16,8 +15,6 @@
         <img src="https://img.shields.io/pypi/dm/telegant.svg">
     </a>
 </p>
-
-
 
 # Telegant 
 Telegant is an elegant modern bot framework for Python, designed to provide developers with simple and elegant access to the Telegram bot API.
@@ -115,13 +112,14 @@ async def say_hello(bot, update):
 ```python 
 @bot.hear("hello")
 async def say_hello(bot, update): 
- 
     buttons = [
-        {"text": "Option 1 (inline)", "data": "option1"},  
+        [
+            {"text": "Option 1 (inline)", "data": "option1"},  
+        ]
     ]
 
     #snake_case example
-    await bot.send_message(text="What's up?", reply_markup=bot.create_reply_markup(buttons))
+    await bot.send_message(text="What's up?", reply_markup=buttons)
 ```
 
 ### Reply buttons example
@@ -129,12 +127,13 @@ async def say_hello(bot, update):
 ```python 
 @bot.hear("hello")
 async def say_hello(bot, update): 
- 
     buttons = [
-        {"text": "Option 1 (reply)"},  
+        [
+            {"text": "Option 1 (reply)"},  
+        ]
     ]
 
-    await bot.send_message(text="What's up?", reply_markup=bot.create_reply_markup(buttons))
+    await bot.send_message(text="What's up?", reply_markup=buttons)
 ```
 
 Bot always detects your buttons type automatically by data key. 
