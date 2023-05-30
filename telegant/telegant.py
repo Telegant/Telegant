@@ -6,6 +6,7 @@ from telegant.handlers import (
     UpdateHandler,
 )
 
+from .method import *
 import re
 import aiohttp
 import asyncio
@@ -13,9 +14,10 @@ import asyncio
 
 class Bot:
     def __init__(self, token):
-        self.token = token
+        self.token = "6107480665:AAGV5JNUnh6ALI53-JZpjkft-7g2cL1BSGA"
         self.event_handler = EventHandler()
-        self.event_handler.base_url = f"https://api.telegram.org/bot{self.token}/"
+        self.base_url = f"https://api.telegram.org/bot{self.token}/"
+        self.event_handler.base_url = self.base_url 
         self.user_state = {}  
 
     async def polling(self):
@@ -179,3 +181,4 @@ class Bot:
         async def wrapper(**params):
             camel_case_name = re.sub(r"_([a-z])", lambda m: m.group(1).upper(), name)
             return await self.request(camel_case_name, params)
+        return wrapper
