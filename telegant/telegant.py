@@ -17,6 +17,7 @@ class Bot:
         self.token = token
         self.event_handler = EventHandler()
         self.event_handler.base_url = f"https://api.telegram.org/bot{self.token}/"
+        self.user_state = {}
 
     async def polling(self):
         last_update_id = 0
@@ -94,13 +95,13 @@ class Bot:
             return wrapper
 
         return decorator
-
-    def hear(self, value):
+        
+    def hear(self, value): 
         return self.process_event_handler(
             value, "message", TextHandler(self.event_handler), "message_handlers"
         )
 
-    def hears(self, value):
+    def hears(self, value): 
         return self.process_many_events(
             value, "message", TextHandler(self.event_handler), "message_handlers"
         )
@@ -133,3 +134,19 @@ class Bot:
             CallbackQueryHandler(self.event_handler),
             "callback_handlers",
         )
+
+    def dialogue(self, value):
+        def decorator(handler_func):
+            async def wrapper(bot, update): 
+                print(f"Dialogue {value} was detected.")
+                return await handler_func(bot, update)
+            return wrapper
+        return decorator
+
+    def step(self, value):
+        def decorator(handler_func):
+            async def wrapper(bot, update): 
+                print(f"Dialogue step {value} was detected.")      
+                return await handler_func(bot, update)
+            return wrapper  
+        return decorator
