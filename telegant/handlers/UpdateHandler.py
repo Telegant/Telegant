@@ -3,4 +3,7 @@ class UpdateHandler:
         self.event_handler = event_handler
 
     async def handle(self, update):
-        raise NotImplementedError("This function has not been implemented yet")
+        for pattern, handler in self.event_handler.update_handlers.items(): 
+            await handler(self.event_handler, update)
+            return
+

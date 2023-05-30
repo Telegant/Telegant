@@ -96,6 +96,11 @@ class Bot:
 
         return decorator
         
+    def on(self, value): 
+        return self.process_event_handler(
+            value, value, UpdateHandler(self.event_handler), "update_handlers"
+        )
+
     def hear(self, value): 
         return self.process_event_handler(
             value, "message", TextHandler(self.event_handler), "message_handlers"
