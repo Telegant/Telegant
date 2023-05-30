@@ -95,6 +95,11 @@ class Bot:
             return wrapper
 
         return decorator
+
+    def init(self):
+        def decorator(handler_func):
+            return handler_func(self.event_handler)
+        return decorator
         
     def on(self, value): 
         return self.process_event_handler(
@@ -155,3 +160,21 @@ class Bot:
                 return await handler_func(bot, update)
             return wrapper  
         return decorator
+
+    async def request(self, action, params=None):
+        async with aiohttp.ClientSession() as session:
+            try:
+                url = f"{self.base_url}{action}"
+                if not params.get("chat_id"):
+                    params["chat_id"] = self.chat_id
+                if params.get("reply_markup"):
+                    params["reply_markup"] = self.create_keyboard(params["reply_markup"])
+                response = await session.post(url, params=params)
+                return await response.json()
+            except Exception as e:
+                print(f"Error sending request: {e}")
+
+    def __getattr__(self, name):
+        async def wrapper(**params):
+            camel_case_name = re.sub(r"_([a-z])", lambda m: m.group(1).upper(), name)
+            return await self.request(camel_case_name, params)
