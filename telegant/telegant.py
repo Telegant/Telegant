@@ -9,7 +9,6 @@ from telegant.handlers import (
 import re
 import aiohttp
 import asyncio
-import json
 
 
 class Bot:
@@ -17,7 +16,7 @@ class Bot:
         self.token = token
         self.event_handler = EventHandler()
         self.event_handler.base_url = f"https://api.telegram.org/bot{self.token}/"
-        self.user_state = {}
+        self.user_state = {}  
 
     async def polling(self):
         last_update_id = 0
@@ -98,9 +97,11 @@ class Bot:
 
     def init(self):
         def decorator(handler_func):
-            return handler_func(self.event_handler)
+            async def decorated_func(EventHandler): 
+                await handler_func(EventHandler)
+            return decorated_func
         return decorator
-        
+
     def on(self, value): 
         return self.process_event_handler(
             value, value, UpdateHandler(self.event_handler), "update_handlers"
