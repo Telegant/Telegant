@@ -6,7 +6,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'),
 
 setup( 
     name='Telegant',
-    version='0.2.4',
+    version='0.2.5',
     description='An Elegant Modern Bot Framework for Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
