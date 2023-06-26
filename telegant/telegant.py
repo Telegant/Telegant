@@ -14,7 +14,7 @@ import asyncio
 
 class Bot:
     def __init__(self, token):
-        self.token = "6107480665:AAGV5JNUnh6ALI53-JZpjkft-7g2cL1BSGA"
+        self.token = token
         self.event_handler = EventHandler()
         self.base_url = f"https://api.telegram.org/bot{self.token}/"
         self.event_handler.base_url = self.base_url 
