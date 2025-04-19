@@ -5,7 +5,7 @@ authors:
   - Vladyslav Kotov <kotov.vladyslav649@protonmail.com>
 
 description: |
-  Modern, elegant Telegram bot framework for Crystal
+  Modern, elegant Telegram bot framework
 
 targets:
   telegant:
