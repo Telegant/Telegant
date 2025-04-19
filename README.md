@@ -6,4 +6,4 @@
   <a href="https://github.com/yourusername/telegant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/telegant/telegant" alt="License"></a>
 </p>
 
-<p align="center">Modern, elegant Telegram bot framework for Crystal</p>
+<p align="center">Telegant is a feature-rich Telegram bot framework specifically built for Crystal. Built with beauty and scalability in mind, it offers a simple syntax for creating complicated bot interactions while retaining Crystal's efficiency benefits.</p>
