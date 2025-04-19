@@ -58,3 +58,7 @@ bot.start()
 ## ❤️ Contribute
 
 ## 🗺️ Roadmap
+
+## 🌐 Community
+- [Join our Discord](https://discord.gg/your-discord-link)
+- [Telegram Group](https://t.me/your-telegram-group)
