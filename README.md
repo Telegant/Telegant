@@ -8,11 +8,11 @@
 
 <p align="center">Telegant is a feature-rich Telegram bot framework specifically built for Crystal. Built with beauty and scalability in mind, it offers a simple syntax for creating complicated bot interactions while retaining Crystal's efficiency benefits.</p>
 
-## Features
+## 🧩 Features
 
-## Installation
+## 🔨 Installation
 
-## Example
+## 💡 Example
 ```crystal
 require "telegant"
 
@@ -53,8 +53,8 @@ bot = MyBot.new("YOUR_BOT_TOKEN")
 bot.start()
 ```
 
-## Documentation
+## 📖 Documentation
 
 ## ❤️ Contribute
 
-## Roadmap
+## 🗺️ Roadmap
