@@ -19,7 +19,6 @@ require "telegant"
 class MyBot < Telegant::Bot
   @[Hears("hi", "hello")]
   def on_greet(update, bot)
-    puts update
     bot.reply("Hey there!")
   end
 
