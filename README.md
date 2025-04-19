@@ -55,6 +55,6 @@ bot.start()
 
 ## Documentation
 
-## Contribute
+## ❤️ Contribute
 
 ## Roadmap
