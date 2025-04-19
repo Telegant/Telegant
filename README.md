@@ -17,37 +17,11 @@
 require "telegant"
 
 class MyBot < Telegant::Bot
-  @[Command("start")]
-  def on_start(update, bot)
-    bot.reply("Hello! I'm a Telegant bot.")
+  @[Hears("hi", "hello")]
+  def on_greet(update, bot)
+    puts update
+    bot.reply("Hey there!")
   end
-
-  @[Command("signup")]
-  def start_signup(update, bot)
-    bot.start_dialog("registration", "name")
-    bot.reply("Let's get you registered! What's your name?")
-  end
-
-  @[Dialog("registration")]
-  @[Step("name")]
-  def get_name(update, bot)
-    if text = bot.message_text
-      bot.set_dialog_data("name", text)
-      bot.next_step("email")
-      bot.reply("Nice to meet you, #{text}! What's your email?")
-    end
-  end
-
-  @[Dialog("registration")]
-  @[Step("email")]
-  def get_email(update, bot)
-    if text = bot.message_text
-      bot.set_dialog_data("email", text)
-      bot.reply("Registration complete!")
-      bot.end_dialog()
-    end
-  end
-end
 
 bot = MyBot.new("YOUR_BOT_TOKEN")
 bot.start()
