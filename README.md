@@ -33,5 +33,6 @@ bot.start()
 ## 🗺️ Roadmap
 
 ## 🌐 Community
-- [Join our Discord](https://discord.gg/your-discord-link)
-- [Telegram Group](https://t.me/your-telegram-group)
+- [Join our Discord](https://discord.gg/nzjSdbjE)
+- [Telegram Group](https://t.me/telegant_group)
+- [Telegram Channel](https://t.me/telegant_official)
