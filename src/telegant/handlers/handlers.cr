@@ -105,7 +105,6 @@ module Telegant
     end
   end
   
-  # --- Middleware Handler ---
   class MiddlewareHandler
     property priority : Int32
     property name : String
