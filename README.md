@@ -19,11 +19,10 @@
 ## 🔨 Installation
 Add Telegant to your `shard.yml`:
 
-```yaml
-dependencies:
-  telegant:
-    github: telegant/telegant
-    branch: release/v0.0.1
+```yaml 
+telegant:
+  github: telegant/telegant
+  branch: release/v0.0.1
 ```
 
 Then run:
