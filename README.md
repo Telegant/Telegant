@@ -14,6 +14,7 @@
 - 🔌 **Attachable middleware** - Add middleware to specified handlers
 - 📊 **Context** - Easy access to the current update properties and API calls
 - 🔑 **State management** - Integrated user state management for complicated interactions
+- 📑 **Dialog management** - Create multi-step conversations with built-in state management
 
 ## 🔨 Installation
 
