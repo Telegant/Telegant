@@ -9,6 +9,11 @@
 <p align="center">Telegant is a feature-rich Telegram bot framework specifically built for Crystal. Built with beauty and scalability in mind, it offers a simple syntax for creating complicated bot interactions while retaining Crystal's efficiency benefits.</p>
 
 ## 🧩 Features
+- ✨ **Elegant annotation-based API** - Define handlers with Crystal annotations
+- 🛡️ **Middleware system** - Add customized logic, such as rate limitation, logging, or access restriction
+- 🔌 **Attachable middleware** - Add middleware to specified handlers
+- 📊 **Context** - Easy access to the current update properties and API calls
+- 🔑 **State management** - Integrated user state management for complicated interactions
 
 ## 🔨 Installation
 
