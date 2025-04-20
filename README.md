@@ -33,10 +33,13 @@ bot.start()
 ```
 
 ## 📖 Documentation
+To-do
 
 ## ❤️ Contribute
+To-do
 
 ## 🗺️ Roadmap
+To-do
 
 ## 🌐 Community
 - [Join our Discord](https://discord.gg/nzjSdbjE)
