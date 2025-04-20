@@ -46,7 +46,7 @@ bot.start()
 ```
 
 ## 📖 Documentation
-To-do
+https://crystaldoc.info/github/Telegant/Telegant/main/index.html
 
 ## ❤️ Contribute
 To-do
