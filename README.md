@@ -17,7 +17,14 @@
 - 📑 **Dialog management** - Create multi-step conversations with built-in state management
 
 ## 🔨 Installation
-To-do 
+Add Telegant
+
+dependencies:
+  telegant:
+    github: telegant/telegant
+    branch: release/v0.0.1
+
+Run shards install 
 
 ## 💡 Example
 ```crystal
