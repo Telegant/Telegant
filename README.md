@@ -17,14 +17,20 @@
 - 📑 **Dialog management** - Create multi-step conversations with built-in state management
 
 ## 🔨 Installation
-Add Telegant
+Add Telegant to your `shard.yml`:
 
+```yaml
 dependencies:
   telegant:
     github: telegant/telegant
     branch: release/v0.0.1
+```
 
-Run shards install 
+Then run:
+
+```bash
+shards install
+```
 
 ## 💡 Example
 ```crystal
