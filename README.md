@@ -2,11 +2,6 @@
   <img src="logo.svg" alt="Telegant Logo" width="90" height="90"> 
 </p>
 
-<p align="center">
-  <img src="logo.svg" alt="Telegant Logo" width="1500" height="1500"> 
-</p>
-
-
 <h1 align="center">Telegant</h1>
 
 <p align="center">
