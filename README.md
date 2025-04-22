@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.svg" alt="Telegant Logo" width="100" height="100">
+  <img src="logo.svg" alt="Telegant Logo" width="90" height="90">
 </p>
 
 <h1 align="center">Telegant</h1>
