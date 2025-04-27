@@ -44,6 +44,7 @@ class MyBot < Telegant::Bot
   def on_greet(update, bot)
     bot.reply("Hey there!")
   end
+end
 
 bot = MyBot.new("YOUR_BOT_TOKEN")
 bot.start()
